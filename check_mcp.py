@@ -49,12 +49,15 @@ async def main():
             print(f"Receive result: {receive_result}")
 
             # Check if we received a message (might be None if timeout)
-            if isinstance(receive_result, tuple) and len(receive_result) >= 2:
-                message, sender, group = receive_result
-                if message and sender:
-                    print(f"Received message from {sender}: {message}")
-                    if group:
-                        print(f"In group: {group}")
+            if (
+                len(receive_result.content) > 0
+                and hasattr(receive_result.content[0], "text")
+            ):
+                # The result comes back as a list of TextContent objects from MCP
+                # We need to parse it to check the MessageResponse
+                print(f"Received: {receive_result.content[0].text}")
+            else:
+                print("No message received or timeout")
 
 
 if __name__ == "__main__":

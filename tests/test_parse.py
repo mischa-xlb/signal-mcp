@@ -1,6 +1,6 @@
 import asyncio
 
-from signal_mcp.main import _parse_receive_output
+from signal_mcp.main import _parse_receive_output, MessageResponse
 
 
 recv = """
@@ -63,7 +63,9 @@ Received a receipt message
 
 
 def test_parse_direct_message():
-    expected_result = ("yo", "+11234567890", None)
+    expected_result = MessageResponse(
+        message="yo", sender_id="+11234567890", group_name=None, error=None
+    )
 
     result = asyncio.run(_parse_receive_output(recv))
 

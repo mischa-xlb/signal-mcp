@@ -5,14 +5,16 @@
 #     "mcp",
 # ]
 # ///
-from mcp.server.fastmcp import FastMCP
-from typing import Optional, Tuple, Dict, Union, Any
-import asyncio
-import subprocess
-import shlex
 import argparse
-from dataclasses import dataclass
+import asyncio
 import logging
+import re
+import shlex
+import subprocess
+from dataclasses import dataclass
+from typing import Any, Dict, Optional, Tuple, Union
+
+from mcp.server.fastmcp import FastMCP
 
 # Set up logging with more detailed format
 logging.basicConfig(
@@ -153,15 +155,28 @@ async def _parse_receive_output(
             # Start of a new envelope block
             current_envelope = {}
 
-            # Extract phone number using a straightforward approach
-            # Format: Envelope from: "Bob Sagat" +11234567890 (device: 4) to +15551234567
-            parts = line.split("+")
-            if len(parts) > 1:
-                # Get the phone number part
-                phone_part = parts[1].split()[0]
-                current_sender = "+" + phone_part
+            # Extract sender - can be phone number or UUID
+            # Format 1: Envelope from: "Name" +11234567890 (device: 4) to +15551234567
+            # Format 2: Envelope from: "Name" ff0aa1b3-94b6-42c8-ae9b-d3cfb5628d6d (device: 1) to +447404327974
+
+            # Try to find UUID pattern (8-4-4-4-12 hex digits)
+            uuid_pattern = r'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'
+            uuid_match = re.search(uuid_pattern, line)
+
+            if uuid_match:
+                # Found UUID sender
+                current_sender = uuid_match.group(1)
                 current_envelope["sender"] = current_sender
-                logger.debug(f"Found sender: {current_sender}")
+                logger.debug(f"Found sender UUID: {current_sender}")
+            else:
+                # Try to extract phone number
+                parts = line.split("+")
+                if len(parts) >= 2:
+                    # Look for the first phone number (sender)
+                    phone_part = parts[1].split()[0]
+                    current_sender = "+" + phone_part
+                    current_envelope["sender"] = current_sender
+                    logger.debug(f"Found sender phone: {current_sender}")
 
         elif line.startswith("Body:"):
             # Found a message body

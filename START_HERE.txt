@@ -1,0 +1,56 @@
+╔═══════════════════════════════════════════════════════════════╗
+║         SIGNAL-CLAUDE BRIDGE - SETUP COMPLETE! ✓              ║
+╚═══════════════════════════════════════════════════════════════╝
+
+📱 Chat with Claude via Signal on your phone while working in code-server!
+
+🚀 QUICK START (3 steps):
+
+   Step 1: Register your Signal number
+   $ ./setup_signal.sh
+
+   Step 2: Start the bridge
+   $ ./run_bridge.sh
+
+   Step 3: Send a message from your phone
+   Text your Signal number: /help
+
+📖 DOCUMENTATION:
+   • QUICKSTART.md - Quick reference guide
+   • README.md - Complete documentation
+   • ./test_installation.sh - Verify setup
+
+✅ INSTALLATION STATUS:
+   ✓ Python 3.13.11 installed
+   ✓ signal-cli 0.13.23 installed
+   ✓ All dependencies installed
+   ✓ All tests passing
+   ⚠ Signal registration needed (run ./setup_signal.sh)
+
+🔧 COMMANDS (text from your phone):
+   /help    - Show available commands
+   /status  - Check if bridge is running
+   /ls      - List files in workspace
+   /pwd     - Show current directory
+   /save    - Save content to file
+
+💡 TIPS:
+   • Read QUICKSTART.md for detailed instructions
+   • Install as systemd service: ./install_service.sh
+   • Check logs: tail -f /tmp/signal-bridge.log
+   • Test setup: ./test_installation.sh
+
+🎯 WHAT HAPPENS:
+   1. You register a phone number with signal-cli on your server
+   2. The bridge monitors for Signal messages to that number
+   3. You send messages from your personal phone
+   4. The bridge responds with file operations, status, etc.
+   5. You can manage your workspace remotely via Signal!
+
+🔐 SECURITY:
+   • Only your registered number can send messages
+   • File operations limited to your workspace
+   • Service runs as your user account
+   • All credentials stored locally
+
+Need help? Read QUICKSTART.md or README.md
